@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python基礎Master</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--card2:#eef4fb;--primary:#2b5f8f;--primary-dark:#1d4568;--gold:#a97f00;--gold-bg:#fff6d6;--ok:#0a7d46;--ok-bg:#e6f6ee;--ng:#c0341d;--ng-bg:#fdecE8;--text:#14222f;--muted:#566776;--border:#d8e2ec;--code:#10202e;--radius:14px;--shadow:0 2px 10px rgba(20,50,80,.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{font-family:system-ui,-apple-system,"Segoe UI","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--primary)}
+.wrap{max-width:680px;margin:0 auto;padding:0 16px}
+/* 画面は文書全体でスクロールする（G検定アプリのflex内スクロール不具合を持ち込まない） */
+.screen{display:none;padding-bottom:96px}
+.screen.active{display:block}
+.head{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--border)}
+.head .wrap{display:flex;align-items:center;gap:10px;min-height:56px}
+.logo{font-weight:800;font-size:18px;color:var(--primary-dark)}
+.badge{font-size:11px;font-weight:700;color:var(--gold);background:var(--gold-bg);padding:2px 9px;border-radius:20px;white-space:nowrap}
+.spacer{flex:1}
+.hero{padding:26px 0 14px}
+.hero h1{font-size:25px;line-height:1.3}
+.hero h1 b{color:var(--primary)}
+.hero p{color:var(--muted);font-size:13.5px;margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px 0 18px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:13px 6px;text-align:center}
+.stat b{display:block;font-size:24px;color:var(--primary);line-height:1.15}
+.stat span{font-size:11.5px;color:var(--muted)}
+.sec{font-size:13px;font-weight:700;color:var(--muted);margin:22px 0 10px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:15px;box-shadow:var(--shadow);margin-bottom:10px}
+.today{border-left:5px solid var(--gold)}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mode{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:15px 13px;text-align:left;box-shadow:var(--shadow);min-height:112px;transition:border-color .15s}
+.mode:hover{border-color:var(--primary)}
+.mode.full{grid-column:1/-1;min-height:0}
+.mode small{display:block;font-weight:700;color:var(--gold);font-size:11.5px}
+.mode b{display:block;font-size:15.5px;margin:1px 0 3px}
+.mode span{display:block;font-size:12.3px;color:var(--muted);line-height:1.5}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chip{display:flex;align-items:center;gap:8px;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 10px;font-size:12.6px;min-height:50px}
+.chip.on{border-color:var(--primary);background:var(--card2)}
+.chip i{font-style:normal;font-weight:800;color:var(--primary);min-width:30px}
+.chip em{font-style:normal;margin-left:auto;font-size:11px;color:var(--muted);white-space:nowrap}
+.chip.hot i{color:var(--ng)}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:14px;font-weight:700;background:var(--primary);color:#fff;margin-top:12px}
+.btn:hover{background:var(--primary-dark)}
+.btn:disabled{background:#b9c6d2;cursor:not-allowed}
+.btn.sub{background:#fff;color:var(--primary);border:1px solid var(--primary)}
+.btn.sub:hover{background:var(--card2)}
+.row{display:flex;gap:8px}.row .btn{margin-top:12px}
+.banner{display:flex;align-items:center;gap:10px;background:var(--gold-bg);border:1px solid #ecd68a;border-radius:12px;padding:11px 13px;margin-bottom:12px;font-size:13.4px}
+.banner button{border:0;background:var(--gold);color:#fff;font-weight:700;border-radius:8px;padding:7px 13px;white-space:nowrap}
+.note{font-size:12.3px;color:var(--muted)}
+/* quiz */
+.qtop{flex-wrap:wrap}
+.qhome{border:0;background:var(--card2);border-radius:9px;padding:6px 11px;font-size:13px;font-weight:700;color:var(--primary-dark)}
+.qcount{font-weight:700;font-size:14px}
+.timer{font-weight:800;font-variant-numeric:tabular-nums;color:var(--ng)}
+.bar{height:5px;background:var(--border)}.bar div{height:100%;background:var(--primary);transition:width .2s}
+.qmeta{display:flex;gap:7px;flex-wrap:wrap;margin:16px 0 8px}
+.tag{font-size:11.5px;font-weight:700;background:var(--card2);color:var(--primary-dark);padding:3px 9px;border-radius:20px}
+.tag.hot{background:#fdecE8;color:var(--ng)}
+.qtext{font-size:17px;font-weight:700;margin-bottom:10px}
+pre.code{background:var(--code);color:#e8f0f7;border-radius:10px;padding:13px;font-family:Consolas,"Cascadia Mono",Menlo,monospace;font-size:14px;line-height:1.55;white-space:pre;overflow-x:auto;margin-bottom:12px;-webkit-overflow-scrolling:touch}
+.tk-k{color:#ffd76a}.tk-s{color:#9be29b}.tk-n{color:#8fd0ff}.tk-c{color:#9db0c0}
+.choice{display:flex;gap:10px;width:100%;text-align:left;background:var(--card);border:2px solid var(--border);border-radius:11px;padding:12px;margin-bottom:8px;align-items:flex-start}
+.choice:hover:not(:disabled){border-color:var(--primary)}
+.choice.sel{border-color:var(--primary);background:var(--card2)}
+.choice.ok{border-color:var(--ok);background:var(--ok-bg)}
+.choice.ng{border-color:var(--ng);background:var(--ng-bg)}
+.choice .mark{font-weight:800;color:var(--muted);min-width:18px}
+.choice .txt{white-space:pre-wrap;word-break:break-word}
+.choice .txt.mono{font-family:Consolas,"Cascadia Mono",Menlo,monospace;font-size:14.5px}
+.why{font-size:13px;color:var(--text);margin-top:4px;font-family:system-ui,"Segoe UI","Yu Gothic UI",sans-serif;font-weight:400}
+.result{font-weight:800;font-size:18px;margin:12px 0 4px}
+.result.ok{color:var(--ok)}.result.ng{color:var(--ng)}
+.read{display:inline-block;font-size:13px;font-weight:700;margin-top:4px}
+.modal{position:fixed;inset:0;z-index:60;background:rgba(12,28,44,.55);display:none;align-items:center;justify-content:center;padding:16px}
+.modal.on{display:flex}
+.modal .box{background:#fff;border-radius:16px;padding:20px;max-width:440px;width:100%;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:18px;margin-bottom:8px}
+.modal ul{margin:8px 0 8px 20px;font-size:14px}
+.check{display:flex;gap:9px;align-items:flex-start;font-size:14px;padding:6px 0;cursor:pointer}
+.check input{margin-top:5px;width:17px;height:17px;flex:none}
+/* results */
+.score{text-align:center;padding:24px 0 10px}
+.score b{font-size:48px;color:var(--primary);line-height:1}
+.score .pass{display:inline-block;margin-top:9px;font-weight:800;padding:4px 18px;border-radius:20px}
+.pass.ok{background:var(--ok-bg);color:var(--ok)}.pass.ng{background:var(--ng-bg);color:var(--ng)}
+.chrow{display:flex;align-items:center;gap:9px;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)}
+.chrow .name{flex:1;min-width:0}
+.chrow .prog{width:84px;height:7px;background:var(--border);border-radius:5px;overflow:hidden;flex:none}
+.chrow .prog div{height:100%;background:var(--primary)}
+.chrow .val{min-width:58px;text-align:right;font-variant-numeric:tabular-nums;font-size:12.3px}
+/* plan */
+.step{margin:18px 0 8px;font-weight:800;color:var(--primary-dark)}
+.day{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:11px 12px;margin-bottom:7px;cursor:pointer}
+.day input{margin-top:5px;width:18px;height:18px;flex:none}
+.day.now{border:2px solid var(--gold);background:#fffdf3}
+.day.done b,.day.done span{color:var(--muted)}
+.day b{font-size:14px}.day span{display:block;font-size:12.7px;color:var(--muted)}
+.fact{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:13.4px}
+.fact div span{display:block;font-size:11.3px;color:var(--muted)}
+/* cheat */
+.search{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;font:inherit;margin:14px 0 10px;background:#fff}
+.acc{background:var(--card);border:1px solid var(--border);border-radius:11px;margin-bottom:8px;overflow:hidden}
+.acc>button{display:flex;width:100%;border:0;background:none;padding:13px;font-weight:700;text-align:left;gap:8px;align-items:center}
+.acc>button em{font-style:normal;margin-left:auto;color:var(--muted);font-size:12px;white-space:nowrap}
+.acc .body{display:none;padding:0 13px 12px}
+.acc.open .body{display:block}
+.item{padding:9px 0;border-top:1px solid var(--border)}
+.item h4{font-size:14px;margin-bottom:5px}
+.out{font-size:11.5px;font-weight:700;color:var(--muted);margin-top:-6px}
+pre.res{background:var(--card2);color:var(--text);margin:3px 0 7px}
+/* syllabus */
+table{width:100%;border-collapse:collapse;font-size:12.7px}
+th,td{padding:8px 4px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle}
+th{font-size:11.3px;color:var(--muted)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.hot td:first-child{color:var(--ng);font-weight:800}
+/* nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom)}
+.nav .in{max-width:680px;margin:0 auto;display:flex}
+.nav button{flex:1;border:0;background:none;padding:9px 2px 8px;font-size:12px;font-weight:700;color:var(--muted);min-height:54px}
+.nav button.on{color:var(--primary);box-shadow:inset 0 3px 0 var(--primary)}
+.toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);background:#14222f;color:#fff;font-size:13.4px;padding:9px 16px;border-radius:10px;z-index:70;display:none;max-width:90%}
+@media(max-width:360px){.modes{grid-template-columns:1fr}.chips{grid-template-columns:1fr}.mode{min-height:0}}
+</style>
+</head>
+<body>
+
+<section class="screen active" id="s-home">
+  <header class="head"><div class="wrap"><span class="logo">Python基礎Master</span><span class="badge">Python 3 エンジニア認定基礎試験</span></div></header>
+  <main class="wrap">
+    <div class="hero"><h1>2週間で<b>合格ライン</b>へ</h1><p>基礎学習 → 問題集 → 模擬試験の3段階で進めるアプリ。録音の学習法に沿っています。</p><p class="note" style="margin-top:4px">個人が作った非公式の学習アプリです。試験の主催団体とは関係ありません。問題はすべて自作です。</p></div>
+    <div id="resume"></div>
+    <div id="today"></div>
+    <div class="stats">
+      <div class="stat"><b id="h-seen">0</b><span id="h-seen-l">解いた問題</span></div>
+      <div class="stat"><b id="h-acc">—</b><span>正答率</span></div>
+      <div class="stat"><b id="h-streak">0</b><span>連続正解</span></div>
+    </div>
+    <div class="sec">3段階で進める</div>
+    <div class="modes">
+      <button class="mode" onclick="start('basic')"><small>ステップ1</small><b>全体像ドリル</b><span>基礎の問題だけ。暗記せず、手を動かす感覚で</span></button>
+      <button class="mode" onclick="start('all')"><small>ステップ2</small><b>問題集モード</b><span>重点章から順に全問。選択肢ごとの解説つき</span></button>
+      <button class="mode" onclick="openMock()"><small>ステップ3</small><b>本番模試</b><span>40問・60分・メモなし。28問以上で合格</span></button>
+      <button class="mode" onclick="start('weak')"><small>仕上げ</small><b>弱点集中</b><span>間違えた問題だけをもう一度</span></button>
+    </div>
+    <div class="sec">章を選んで解く（赤は出題の75%を占める重点章）</div>
+    <div class="chips" id="chips"></div>
+    <button class="btn" id="chapter-start" onclick="startChapters()" disabled>選んだ章を解く</button>
+  </main>
+</section>
+
+<section class="screen" id="s-quiz">
+  <header class="head"><div class="wrap qtop"><button class="qhome" onclick="pause()">中断</button><span class="qcount" id="q-count"></span><span class="spacer"></span><span class="timer" id="q-timer"></span></div><div class="bar"><div id="q-bar"></div></div></header>
+  <main class="wrap">
+    <div class="qmeta" id="q-meta"></div>
+    <div class="qtext" id="q-text"></div>
+    <div id="q-code"></div>
+    <div id="q-choices"></div>
+    <div id="q-after"></div>
+  </main>
+</section>
+
+<section class="screen" id="s-result">
+  <header class="head"><div class="wrap"><span class="logo">結果</span></div></header>
+  <main class="wrap">
+    <div class="score"><b id="r-pct"></b><div class="note" id="r-frac"></div><div id="r-pass"></div></div>
+    <div class="sec">章ごとの成績</div>
+    <div class="card" id="r-ch"></div>
+    <button class="btn" id="r-retry" onclick="retryWrong()">間違えた問題を復習する</button>
+    <button class="btn sub" onclick="show('home')">ホームに戻る</button>
+    <div id="r-wrong-wrap">
+      <div class="sec">間違えた問題と原因の確認</div>
+      <div id="r-wrong"></div>
+    </div>
+  </main>
+</section>
+
+<section class="screen" id="s-plan">
+  <header class="head"><div class="wrap"><span class="logo">2週間の計画</span></div></header>
+  <main class="wrap">
+    <div class="sec">録音の要点</div>
+    <div class="card" style="font-size:13.6px">
+      <div>① 出題の多い章から攻める。3・4・5・8・10章で全体の75%。</div>
+      <div>② いきなり公式チュートリアルから読まない。初心者には難しいので、間違えたときに該当章を読む。</div>
+      <div>③ 不正解の選択肢がなぜ違うかまで理解する。</div>
+      <div>④ 本番はメモが使えないので、普段からメモなしで解く。</div>
+      <div>⑤ 完璧を目指さず、わからなければ検索して前へ進む。</div>
+      <p class="note" style="margin-top:7px">目安の時間（投稿者の体感）：完全な初学者は約30時間。</p>
+    </div>
+    <div id="plan-start"></div>
+    <div id="plan"></div>
+    <div class="sec">試験の基本（公式情報・2026/11/9確認）</div>
+    <div class="card fact">
+      <div><span>問題数</span>40問・選択式</div><div><span>試験時間</span>60分</div>
+      <div><span>合格ライン</span>70%（28問）</div><div><span>受験料</span>11,000円（税込）／学生 5,500円</div>
+      <div><span>方式</span>CBT（テストセンター）</div><div><span>持ち込み</span>筆記用具・メモ帳は禁止</div>
+    </div>
+    <div class="card" style="font-size:13.5px">
+      <a href="https://www.pythonic-exam.com/exam/basic" target="_blank" rel="noopener">試験の公式ページ ↗</a><br>
+      <a href="https://docs.python.org/ja/3/tutorial/index.html" target="_blank" rel="noopener">Pythonチュートリアル（Web版）↗</a><br>
+      <a href="https://diver.diveintocode.jp/python_basic/lp" target="_blank" rel="noopener">模擬試験：DIVE INTO EXAM ↗</a><br>
+      <a href="https://study.prime-strategy.co.jp/" target="_blank" rel="noopener">模擬試験：PRIME STUDY ↗</a>
+      <p class="note" style="margin-top:7px">Web版は最新のPython向けで、出題の主教材は書籍の第4版です。細かい違いがあることがあります。</p>
+    </div>
+  </main>
+</section>
+
+<section class="screen" id="s-cheat">
+  <header class="head"><div class="wrap"><span class="logo">早見表</span><span class="badge">全コード実行確認済み</span></div></header>
+  <main class="wrap">
+    <input class="search" id="cheat-q" type="search" placeholder="キーワードで探す（例：スライス）" oninput="renderCheat(this.value)">
+    <div id="cheat"></div>
+  </main>
+</section>
+
+<section class="screen" id="s-range">
+  <header class="head"><div class="wrap"><span class="logo">出題範囲</span></div></header>
+  <main class="wrap">
+    <p class="note" style="margin:14px 0">章の問題数は試験の公式ページの表のとおりです。問題で間違えたら、その章のチュートリアルを読みましょう。読み終えたらチェックを付けます。</p>
+    <div class="card" style="overflow-x:auto"><table id="range"></table></div>
+    <p class="note">13章は出題なし。3・4・5・8・10章だけでは30問で、合格の28問にはほぼ全問正解が必要です。ほかの章にも余裕があれば取り組みましょう。公式ページには、教材の外の一般常識からの出題もあると書かれています。</p>
+  </main>
+</section>
+
+<section class="screen" id="s-stats">
+  <header class="head"><div class="wrap"><span class="logo">統計</span><span class="spacer"></span><button class="qhome" id="reset-btn" onclick="resetAll()">記録を消す</button></div></header>
+  <main class="wrap" id="stats-body"></main>
+</section>
+
+<nav class="nav" id="nav"><div class="in">
+  <button id="n-home" class="on" onclick="show('home')">ホーム</button>
+  <button id="n-plan" onclick="show('plan')">計画</button>
+  <button id="n-cheat" onclick="show('cheat')">早見表</button>
+  <button id="n-range" onclick="show('range')">出題範囲</button>
+  <button id="n-stats" onclick="show('stats')">統計</button>
+</div></nav>
+
+<div class="modal" id="mock-modal"><div class="box">
+  <h3>本番模試をはじめる</h3>
+  <p style="font-size:14px">出題比率どおりに40問、制限時間60分です。途中で解説は出ません。</p>
+  <ul><li>メモ用紙は使わない</li><li>Pythonを実行して確かめない</li><li>終わったら、間違えた原因まで確認する</li></ul>
+  <label class="check"><input type="checkbox" id="mock-ok" onchange="document.getElementById('mock-go').disabled=!this.checked">メモなしで解きます</label>
+  <div class="row"><button class="btn sub" onclick="closeMock()">やめる</button><button class="btn" id="mock-go" disabled onclick="closeMock();start('mock')">開始する</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script type="application/json" id="qdata">[{"id":"c1-01","ch":1,"lv":1,"q":"Pythonの特徴として正しいものはどれか。","choices":["インタープリタ言語で、コンパイルやリンクの手順がいらない","実行前に必ずコンパイルとリンクが必要である","処理のまとまりは中括弧 { } で表す","変数や引数の型宣言が必須である"],"a":0,"why":["正しい。書いたらすぐ動かせるのが特徴。","Cなどの説明。Pythonは直接実行できる。","Pythonのまとまりはインデントで表す。","型宣言なしで使える。"],"verify":"x = 1\nx = 'a'\nif True:\n    y = 1\nassert x == 'a' and y == 1"},{"id":"c1-02","ch":1,"lv":1,"q":"「Python」という名前の由来はどれか。","choices":["BBCのコメディ番組「Monty Python's Flying Circus」","作者が飼っていたヘビの名前","Programming Yes Thon の頭文字","開発された研究所の名前"],"a":0,"why":["正しい。爬虫類とは直接の関係はないとチュートリアルにある。","ヘビが由来ではない。","そのような略語ではない。","研究所の名前ではない。"]},{"id":"c2-01","ch":2,"lv":2,"q":"コマンドラインで、引数の文字列をPythonのコードとして実行するオプションはどれか。","choices":["python -c","python -m","python -i","python -V"],"a":0,"why":["正しい。python -c \"print(1)\" のように使う。","-m はモジュールをスクリプトとして実行する。","-i は実行後に対話モードに入る。","-V はバージョンを表示する。"],"verify":"import subprocess, sys\nr = subprocess.run([sys.executable, '-c', 'print(1)'], capture_output=True, text=True)\nassert r.stdout.strip() == '1'\nv = subprocess.run([sys.executable, '-V'], capture_output=True, text=True)\nassert v.stdout.startswith('Python')"},{"id":"c2-02","ch":2,"lv":1,"q":"Python 3のソースコードの、標準の文字エンコーディングはどれか。","choices":["UTF-8","ASCII","Shift_JIS","OSの設定によって毎回変わる"],"a":0,"why":["正しい。何も指定しなければUTF-8として読まれる。","Python 2までの標準。","日本語Windowsでよく見るが標準ではない。","ソースの標準はOSに関係なくUTF-8。"],"verify":"code = compile('名前 = 1'.encode('utf-8'), 'x', 'exec')\ng = {}\nexec(code, g)\nassert g['名前'] == 1"},{"id":"c3-01","ch":3,"lv":1,"q":"次のコードの出力はどれか。","code":"print(7 // 2)","choices":["3","3.5","4","エラーになる"],"a":0,"why":["正しい。// は切り捨て除算。","3.5 は / の結果。","四捨五入や切り上げはしない。","数値どうしなので問題なく動く。"],"check":"output"},{"id":"c3-02","ch":3,"lv":2,"q":"次のコードの出力はどれか。","code":"print(-7 // 2)","choices":["-4","-3","-3.5","4"],"a":0,"why":["正しい。// は小さい方向（マイナス無限大側）へ切り捨てる。","0に近づける切り捨てと勘違いした答え。","-3.5 は / の結果。","符号は消えない。"],"check":"output"},{"id":"c3-03","ch":3,"lv":2,"q":"次のコードの出力はどれか。","code":"print(2 ** 3 ** 2)","choices":["512","64","72","12"],"a":0,"why":["正しい。** は右から計算するので 2 ** 9。","(2**3)**2 と左から計算した答え。","2**3 * 9 と勘違いした答え。","掛け算と足し算を混ぜた答え。"],"check":"output"},{"id":"c3-04","ch":3,"lv":1,"q":"次のコードの出力はどれか。","code":"print(10 / 5)","choices":["2.0","2","0","エラーになる"],"a":0,"why":["正しい。/ の結果は割り切れても浮動小数点数。","整数になるのは // を使ったとき。","余りではない。","問題なく動く。"],"check":"output"},{"id":"c3-05","ch":3,"lv":1,"q":"次のコードの出力はどれか。","code":"s = 'Python'\nprint(s[1:4])","choices":["yth","Pyt","ytho","ython"],"a":0,"why":["正しい。添字1から3まで（4の手前まで）。","先頭は添字0で、1から始まる指定ではない。","終わりの4は含まれない。","終わりの指定を無視している。"],"check":"output"},{"id":"c3-06","ch":3,"lv":1,"q":"次のコードの出力はどれか。","code":"s = 'Python'\nprint(s[-2:])","choices":["on","Pyth","o","n"],"a":0,"why":["正しい。後ろから2文字目から最後まで。","s[:-2] の結果。","s[-2] の結果。","s[-1] の結果。"],"check":"output"},{"id":"c3-07","ch":3,"lv":1,"q":"次のコードを実行するとどうなるか。","code":"s = 'abc'\ns[0] = 'z'\nprint(s)","choices":["TypeError が発生する","zbc と表示される","abc と表示される","IndexError が発生する"],"a":0,"err":"TypeError","why":["正しい。文字列は変更できない（イミュータブル）。","リストなら書き換えられるが文字列は不可。","黙って無視はされない。","添字0は範囲内なのでIndexErrorではない。"],"check":"output"},{"id":"c3-08","ch":3,"lv":2,"q":"次のコードの出力はどれか。","code":"print('ab' 'cd' * 2)","choices":["abcdabcd","abcdcd","ababcd","エラーになる"],"a":0,"why":["正しい。隣り合う文字列リテラルは先に連結され、そのあと2倍される。","'cd' だけを2倍した答え。","'ab' だけを2倍した答え。","隣り合うリテラルは + なしで連結できる。"],"check":"output"},{"id":"c3-09","ch":3,"lv":2,"q":"次のコードの出力として正しい説明はどれか。","code":"s = 'abc'\nprint(s[10:])","choices":["空文字列になり、空行だけが表示される","abc と表示される","IndexError が発生する","c と表示される"],"a":0,"expect":"","why":["正しい。スライスは範囲外でもエラーにならず空になる。","開始位置10が無視されるわけではない。","IndexErrorになるのは s[10] のように1文字を指定したとき。","末尾に丸められるわけではない。"],"check":"output"},{"id":"c3-10","ch":3,"lv":1,"q":"次のコードの出力はどれか。","code":"a = [1, 2, 3]\nb = a\nb.append(4)\nprint(a)","choices":["[1, 2, 3, 4]","[1, 2, 3]","[4]","エラーになる"],"a":0,"why":["正しい。b = a はコピーではなく同じリストを指す。","コピーされたと勘違いした答え。","a の中身が消えるわけではない。","問題なく動く。"],"check":"output"},{"id":"c3-11","ch":3,"lv":2,"q":"次のコードの出力はどれか。","code":"a = [1, 2, 3, 4, 5]\na[1:3] = []\nprint(a)","choices":["[1, 4, 5]","[1, 2, 3, 4, 5]","[3, 4, 5]","[1, [], 4, 5]"],"a":0,"why":["正しい。添字1と2の要素が空リストに置き換わり、取り除かれる。","スライスへの代入で元のリストは変わる。","取り除く範囲を先頭からと勘違いした答え。","a[1] = [] のように1要素へ代入したときの形に近い。"],"check":"output"},{"id":"c3-12","ch":3,"lv":2,"q":"次のコードの出力はどれか。","code":"a, b = 0, 1\na, b = b, a + b\nprint(a, b)","choices":["1 1","1 2","0 1","1 0"],"a":0,"why":["正しい。右辺を先に全部計算してから代入する（b=1, a+b=1）。","a を先に更新してから a+b を計算した答え。","代入が起きていない答え。","a と b を入れ替えただけの答え。"],"check":"output"},{"id":"c4-01","ch":4,"lv":1,"q":"次のコードの出力はどれか。","code":"for i in range(2, 8, 3):\n    print(i, end=' ')","choices":["2 5","2 5 8","2 4 6","3 6"],"a":0,"why":["正しい。2から3ずつ増やし、8の手前まで。","終わりの8は含まれない。","増分は2ではなく3。","開始は2。"],"check":"output"},{"id":"c4-02","ch":4,"lv":1,"q":"次のコードの出力はどれか。","code":"print(list(range(5, 0, -2)))","choices":["[5, 3, 1]","[5, 3, 1, -1]","[5, 4, 3, 2, 1]","[]"],"a":0,"why":["正しい。5から2ずつ減らし、0の手前まで。","終わりの0を越えては進まない。","増分は-1ではなく-2。","負の増分なので空にはならない。"],"check":"output"},{"id":"c4-03","ch":4,"lv":2,"q":"次のコードの出力はどれか。","code":"print(range(3))","choices":["range(0, 3)","[0, 1, 2]","0 1 2","(0, 1, 2)"],"a":0,"why":["正しい。range はリストではなく、そのままだと range オブジェクトとして表示される。","list(range(3)) の結果。","for で1つずつ print したときの形。","tuple(range(3)) の結果。"],"check":"output"},{"id":"c4-04","ch":4,"lv":2,"q":"次のコードの出力はどれか。","code":"for n in [1, 2, 3]:\n    if n == 2:\n        break\nelse:\n    print('A')\nprint('B')","choices":["B","A\nB","A","何も表示されない"],"a":0,"why":["正しい。break で抜けると for の else は実行されない。","else が実行されるのは break せずに最後まで回ったとき。","最後の print('B') はループの外なので必ず動く。","B は表示される。"],"check":"output"},{"id":"c4-05","ch":4,"lv":2,"q":"次のコードの出力はどれか。","code":"for n in [1, 3]:\n    if n == 2:\n        break\nelse:\n    print('A')\nprint('B')","choices":["A\nB","B","A","B\nA"],"a":0,"why":["正しい。break せずに最後まで回ったので else も実行される。","break していないので else は実行される。","最後の print('B') も実行される。","else の方が先に動く。"],"check":"output"},{"id":"c4-06","ch":4,"lv":1,"q":"次のコードの出力はどれか。","code":"for i in range(4):\n    if i % 2 == 0:\n        continue\n    print(i)","choices":["1\n3","0\n2","1","0\n1\n2\n3"],"a":0,"why":["正しい。偶数のときは continue で print を飛ばす。","偶数だけ表示すると勘違いした答え。","continue はループを終わらせない（それは break）。","continue の効果を無視した答え。"],"check":"output"},{"id":"c4-07","ch":4,"lv":1,"q":"次のコードの出力はどれか。","code":"def f():\n    x = 1\nprint(f())","choices":["None","1","空行だけ","NameError が発生する"],"a":0,"why":["正しい。return がない関数は None を返す。","x を返す指定（return x）がない。","None という文字が表示される。","f は定義済みなのでエラーにならない。"],"check":"output"},{"id":"c4-08","ch":4,"lv":2,"q":"次のコードの出力はどれか。","code":"def f(x, L=[]):\n    L.append(x)\n    return L\nf(1)\nprint(f(2))","choices":["[1, 2]","[2]","[1]","エラーになる"],"a":0,"why":["正しい。既定値のリストは定義時に1回だけ作られ、呼び出しの間で共有される。","呼ぶたびに新しいリストができると勘違いした答え。","2回目の append が反映されている。","問題なく動く。"],"check":"output"},{"id":"c4-09","ch":4,"lv":2,"q":"次のコードの出力はどれか。","code":"n = 5\ndef f(a=n):\n    return a\nn = 6\nprint(f())","choices":["5","6","None","NameError が発生する"],"a":0,"why":["正しい。既定値は関数を定義した時点で評価される。","呼び出し時の値を使うと勘違いした答え。","a を return している。","定義時に n は存在している。"],"check":"output"},{"id":"c4-10","ch":4,"lv":1,"q":"次のコードの出力はどれか。","code":"def f(a, b=2, c=3):\n    return a + b * c\nprint(f(1, c=4))","choices":["9","12","7","TypeError が発生する"],"a":0,"why":["正しい。a=1, b=2（既定）, c=4 で 1 + 2*4。","掛け算を先に計算するのを忘れた答え。","c を既定の3のまま計算した答え。","引数の渡し方は正しい。"],"check":"output"},{"id":"c4-11","ch":4,"lv":2,"q":"次のコードを実行するとどうなるか。","code":"def f(a, b):\n    return a + b\nprint(f(a=1, 2))","choices":["SyntaxError が発生する","3 と表示される","TypeError が発生する","1 と表示される"],"a":0,"err":"SyntaxError","why":["正しい。キーワード引数のあとに位置引数は書けない。","文法エラーなので実行されない。","TypeError は実行時のエラー。これは実行前に文法で弾かれる。","実行されない。"],"check":"output"},{"id":"c4-12","ch":4,"lv":2,"q":"次のコードを実行するとどうなるか。","code":"def f(a, b):\n    return a + b\nprint(f(1, a=2))","choices":["TypeError が発生する","3 と表示される","SyntaxError が発生する","1 と表示される"],"a":0,"err":"TypeError","why":["正しい。a に2回値を渡すことになり実行時エラー。","a=1 と a=2 が同時に渡されるので計算まで進まない。","書き方の順序は文法上問題ない。","計算まで進まない。"],"check":"output"},{"id":"c4-13","ch":4,"lv":2,"q":"次のコードの出力はどれか。","code":"def f(*a, **k):\n    print(a, k)\nf(1, 2, x=3)","choices":["(1, 2) {'x': 3}","[1, 2] {'x': 3}","(1, 2, 3) {}","エラーになる"],"a":0,"why":["正しい。*a はタプル、**k は辞書で受け取る。","*a で受け取るのはリストではなくタプル。","x=3 は **k 側に入る。","問題なく動く。"],"check":"output"},{"id":"c4-14","ch":4,"lv":3,"q":"次のコードを実行するとどうなるか。","code":"def f(a, *, b):\n    return a + b\nprint(f(1, 2))","choices":["TypeError が発生する","3 と表示される","SyntaxError が発生する","1 と表示される"],"a":0,"err":"TypeError","why":["正しい。* より後ろの b はキーワードでしか渡せない。f(1, b=2) なら動く。","b を位置で渡しているので動かない。","定義の * は正しい文法。","計算まで進まない。"],"check":"output"},{"id":"c4-15","ch":4,"lv":2,"q":"次のコードの出力はどれか。","code":"d = {'b': 1, 'a': 2}\ndef f(a, b):\n    return a - b\nprint(f(**d))","choices":["1","-1","3","TypeError が発生する"],"a":0,"why":["正しい。キーの名前どおり a=2, b=1 で渡される。","辞書の順番どおりに渡ると勘違いした答え。","足し算ではなく引き算。","キーが引数名と一致しているので動く。"],"check":"output"},{"id":"c4-16","ch":4,"lv":2,"q":"次のコードの出力はどれか。","code":"def mk(n):\n    return lambda x: x + n\ng = mk(3)\nprint(g(4))","choices":["7","3","4","エラーになる"],"a":0,"why":["正しい。ラムダ式は外側の n=3 を覚えている。","n だけの値。","x だけの値。","問題なく動く。"],"check":"output"},{"id":"c4-17","ch":4,"lv":1,"q":"次のコードの出力はどれか。","code":"x = 1\ndef f():\n    x = 2\nf()\nprint(x)","choices":["1","2","None","NameError が発生する"],"a":0,"why":["正しい。関数の中の x はその関数だけのローカル変数。","global 宣言がないと外の x は変わらない。","x は 1 のまま。","x は定義済み。"],"check":"output"},{"id":"c4-18","ch":4,"lv":1,"q":"次のコードの出力はどれか。","code":"def f():\n    'hello'\n    return 1\nprint(f.__doc__)","choices":["hello","1","None","f"],"a":0,"why":["正しい。関数の先頭の文字列はドキュメンテーション文字列になる。","__doc__ は戻り値ではない。","先頭に文字列があるので None ではない。","関数名は __name__ で取り出す。"],"check":"output"},{"id":"c5-01","ch":5,"lv":1,"q":"次のコードの出力はどれか。","code":"a = [1, 2]\na.extend([3, 4])\nprint(a)","choices":["[1, 2, 3, 4]","[1, 2, [3, 4]]","[3, 4]","[1, 2]"],"a":0,"why":["正しい。extend は要素を1つずつ追加する。","append([3, 4]) の結果。","元の要素は残る。","a は変更される。"],"check":"output"},{"id":"c5-02","ch":5,"lv":1,"q":"次のコードの出力はどれか。","code":"a = [3, 1, 2]\nprint(a.sort())","choices":["None","[1, 2, 3]","[3, 1, 2]","エラーになる"],"a":0,"why":["正しい。sort はリスト自体を並べ替えて None を返す。","並べ替え後のリストは a を print すると見える。sorted(a) なら返る。","戻り値は元のリストでもない。","問題なく動く。"],"check":"output"},{"id":"c5-03","ch":5,"lv":1,"q":"次のコードの出力はどれか。","code":"a = [1, 2, 3]\nprint(a.pop(0), a)","choices":["1 [2, 3]","3 [1, 2]","1 [1, 2, 3]","0 [2, 3]"],"a":0,"why":["正しい。pop(0) は先頭を取り除いて返す。","引数なしの pop() の結果。","pop は要素を取り除く。","0 は添字であり値ではない。"],"check":"output"},{"id":"c5-04","ch":5,"lv":1,"q":"次のコードの出力はどれか。","code":"a = [0, 1, 2, 3]\ndel a[1:3]\nprint(a)","choices":["[0, 3]","[0, 1, 2, 3]","[3]","[0, 2, 3]"],"a":0,"why":["正しい。添字1と2を削除する。","del で要素は消える。","先頭の0は範囲外なので残る。","添字1だけを消した答え。"],"check":"output"},{"id":"c5-05","ch":5,"lv":1,"q":"次のコードの出力はどれか。","code":"print([x * 2 for x in range(4) if x % 2])","choices":["[2, 6]","[0, 4]","[0, 2, 4, 6]","[1, 3]"],"a":0,"why":["正しい。奇数 1, 3 だけを選んで2倍する。","偶数を選んだ答え。x % 2 が真になるのは奇数。","if の条件を無視した答え。","2倍するのを忘れた答え。"],"check":"output"},{"id":"c5-06","ch":5,"lv":3,"q":"次のコードの出力はどれか。","code":"m = [[1, 2], [3, 4]]\nprint([[r[i] for r in m] for i in range(2)])","choices":["[[1, 3], [2, 4]]","[[1, 2], [3, 4]]","[[2, 1], [4, 3]]","[[3, 1], [4, 2]]"],"a":0,"why":["正しい。行と列を入れ替えている。","元のままではない。","各行の左右を反転した答え。","90度回転した答え。"],"check":"output"},{"id":"c5-07","ch":5,"lv":1,"q":"次のコードの出力はどれか。","code":"t = (1)\nprint(type(t).__name__)","choices":["int","tuple","list","エラーになる"],"a":0,"why":["正しい。要素1つのタプルは (1,) とカンマが必要。","カンマがないのでただの数値。","角括弧ではない。","問題なく動く。"],"check":"output"},{"id":"c5-08","ch":5,"lv":2,"q":"次のコードの出力はどれか。","code":"t = (1, [2])\nt[1].append(3)\nprint(t)","choices":["(1, [2, 3])","(1, [2])","TypeError が発生する","(1, 2, 3)"],"a":0,"why":["正しい。タプルの中のリスト自体は変更できる。","append は効いている。","t[1] = ... のようにタプルの要素を差し替えるとTypeError。ここは違う。","リストの形は残る。"],"check":"output"},{"id":"c5-09","ch":5,"lv":1,"q":"次のコードの出力はどれか。","code":"s = {1, 2, 2, 3}\nprint(len(s))","choices":["3","4","2","エラーになる"],"a":0,"why":["正しい。集合は重複を持たない。","重複の2が1つにまとまる。","異なる値は3種類ある。","問題なく動く。"],"check":"output"},{"id":"c5-10","ch":5,"lv":1,"q":"次のコードの出力はどれか。","code":"print(type({}).__name__)","choices":["dict","set","list","tuple"],"a":0,"why":["正しい。{} は空の辞書。","空の集合は set() で作る。","リストは []。","タプルは ()。"],"check":"output"},{"id":"c5-11","ch":5,"lv":2,"q":"次のコードの出力はどれか。","code":"a = {1, 2, 3}\nb = {2, 3, 4}\nprint(sorted(a - b), sorted(a & b))","choices":["[1] [2, 3]","[4] [2, 3]","[1] [1, 2, 3, 4]","[1, 4] [2, 3]"],"a":0,"why":["正しい。- は差集合、& は共通部分。","b - a の結果を選んだ答え。","| （和集合）と勘違いした答え。","^ （対称差）と勘違いした答え。"],"check":"output"},{"id":"c5-12","ch":5,"lv":2,"q":"次のコードを実行するとどうなるか。","code":"d = {[1]: 2}\nprint(d)","choices":["TypeError が発生する","{[1]: 2} と表示される","{1: 2} と表示される","KeyError が発生する"],"a":0,"err":"TypeError","why":["正しい。変更可能なリストは辞書のキーにできない。","リストはハッシュ化できない。","角括弧が勝手に外れることはない。","KeyError は存在しないキーを読んだときのエラー。"],"check":"output"},{"id":"c5-13","ch":5,"lv":2,"q":"次のコードの出力はどれか。","code":"print(list(zip([1, 2, 3], 'ab')))","choices":["[(1, 'a'), (2, 'b')]","[(1, 'a'), (2, 'b'), (3, None)]","[1, 'a', 2, 'b', 3]","エラーになる"],"a":0,"why":["正しい。zip は短い方に合わせて終わる。","足りない分を None で埋めるのは itertools.zip_longest。","タプルの組になる。","長さが違っても問題なく動く。"],"check":"output"},{"id":"c5-14","ch":5,"lv":3,"q":"次のコードの出力はどれか。","code":"print(0 or 'a' and 'b')","choices":["b","a","0","True"],"a":0,"why":["正しい。and が先。'a' and 'b' は 'b'、0 or 'b' は 'b'。","and は左が真なら右を返す。","or は左が偽なら右を返す。","真偽値ではなく値そのものを返す。"],"check":"output"},{"id":"c6-01","ch":6,"lv":1,"q":"このファイルをスクリプトとして直接実行したときの出力はどれか。","code":"print(__name__)","choices":["__main__","ファイル名","__name__","None"],"a":0,"why":["正しい。直接実行すると __name__ は '__main__' になる。","ファイル名（モジュール名）になるのは import されたとき。","変数の中身が表示される。","必ず文字列が入っている。"],"check":"output"},{"id":"c6-02","ch":6,"lv":1,"q":"次のコードの出力はどれか。","code":"from math import sqrt as r\nprint(r(9))","choices":["3.0","3","9","NameError が発生する"],"a":0,"why":["正しい。as で別名を付けられる。sqrt は浮動小数点数を返す。","math.sqrt の結果は整数にならない。","平方根が計算される。","r という名前で読み込まれている。"],"check":"output"},{"id":"c6-03","ch":6,"lv":2,"q":"「from モジュール import *」で読み込まれる名前を指定する変数はどれか。","choices":["__all__","__init__","__name__","__path__"],"a":0,"why":["正しい。__all__ のリストにある名前だけが読み込まれる。","__init__ はクラスの初期化メソッドやパッケージの __init__.py のこと。","__name__ はモジュールの名前。","__path__ はパッケージの検索場所。"],"verify":"open('m_all.py', 'w').write(\"__all__ = ['a']\\na = 1\\nb = 2\\n\")\nfrom m_all import *\nassert a == 1\nassert 'b' not in globals()"},{"id":"c6-04","ch":6,"lv":2,"q":"チュートリアルでパッケージの作り方として説明される、ディレクトリに置くファイルはどれか。","choices":["__init__.py","__main__.txt","setup.ini","package.py"],"a":0,"why":["正しい。ディレクトリをパッケージとして扱わせるためのファイル。空でもよい。","そのようなファイルは使わない。","パッケージの目印にはならない。","決まった役割を持つ名前ではない。"],"verify":"import os\nos.makedirs('pkg_x', exist_ok=True)\nopen('pkg_x/__init__.py', 'w').write('v = 5\\n')\nimport pkg_x\nassert pkg_x.v == 5"},{"id":"c7-01","ch":7,"lv":1,"q":"次のコードの出力はどれか。","code":"x = 3.14159\nprint(f'{x:.2f}')","choices":["3.14","3.14159","3.1","エラーになる"],"a":0,"why":["正しい。.2f は小数点以下2桁で表示する。","書式を指定しているのでそのままではない。","小数点以下は1桁ではなく2桁。","正しいf文字列。"],"check":"output"},{"id":"c7-02","ch":7,"lv":1,"q":"次のコードの出力はどれか。","code":"with open('t.txt', 'w') as f:\n    f.write('a')\nprint(f.closed)","choices":["True","False","a","ValueError が発生する"],"a":0,"why":["正しい。with を抜けるとファイルは自動で閉じる。","close() を書かなくても閉じられる。","closed は閉じているかどうかを表す属性。","閉じたファイルの closed を見るのは問題ない。"],"check":"output"},{"id":"c8-01","ch":8,"lv":1,"q":"次のコードの出力はどれか。","code":"try:\n    print('A')\nexcept ValueError:\n    print('B')\nelse:\n    print('C')\nfinally:\n    print('D')","choices":["A\nC\nD","A\nD","A\nB\nD","A\nC"],"a":0,"why":["正しい。例外なしなら else、最後に finally。","例外がないので else も動く。","例外が起きていないので except は動かない。","finally は必ず動く。"],"check":"output"},{"id":"c8-02","ch":8,"lv":1,"q":"次のコードの出力はどれか。","code":"try:\n    int('x')\nexcept ValueError:\n    print('B')\nelse:\n    print('C')\nfinally:\n    print('D')","choices":["B\nD","C\nD","B\nC\nD","B"],"a":0,"why":["正しい。例外が起きたので except と finally が動く。","例外が起きると else は動かない。","else は例外なしのときだけ。","finally は必ず動く。"],"check":"output"},{"id":"c8-03","ch":8,"lv":1,"q":"次のコードを実行するとどうなるか。","code":"print(1 / 0)","choices":["ZeroDivisionError が発生する","0 と表示される","ValueError が発生する","inf と表示される"],"a":0,"err":"ZeroDivisionError","why":["正しい。0で割ると発生する。","結果を0にはしない。","値の種類の問題ではない。","Pythonの / は inf を返さず例外になる。"],"check":"output"},{"id":"c8-04","ch":8,"lv":1,"q":"次のコードを実行するとどうなるか。","code":"print('1' + 1)","choices":["TypeError が発生する","2 と表示される","11 と表示される","ValueError が発生する"],"a":0,"err":"TypeError","why":["正しい。文字列と数値は + できない。","自動で数値に変換はされない。","自動で文字列に変換もされない。","型の組み合わせの問題なのでTypeError。"],"check":"output"},{"id":"c8-05","ch":8,"lv":2,"q":"次のコードの出力はどれか。","code":"try:\n    raise ValueError\nexcept Exception:\n    print('E')\nexcept ValueError:\n    print('V')","choices":["E","V","E\nV","何も表示されない"],"a":0,"why":["正しい。上から順に見て、最初に合致した except だけ動く。ValueError は Exception の仲間。","先に Exception で捕まる。","動く except は1つだけ。","捕まえて print している。"],"check":"output"},{"id":"c8-06","ch":8,"lv":2,"q":"次のコードの出力はどれか。","code":"class MyErr(Exception):\n    pass\ntry:\n    raise MyErr('x')\nexcept MyErr as e:\n    print(e.args)","choices":["('x',)","x","['x']","()"],"a":0,"why":["正しい。args は例外に渡した引数のタプル。","print(e) なら x と表示される。","リストではなくタプル。","引数 'x' を渡している。"],"check":"output"},{"id":"c8-07","ch":8,"lv":3,"q":"次のコードの出力はどれか。","code":"def f():\n    try:\n        return 'A'\n    finally:\n        print('B')\nprint(f())","choices":["B\nA","A\nB","A","B"],"a":0,"why":["正しい。return で関数を抜ける前に finally が動く。","戻り値を表示するのは f() が終わった後。","finally は return があっても動く。","戻り値 A も表示される。"],"check":"output"},{"id":"c8-08","ch":8,"lv":1,"q":"次のコードを実行するとどうなるか。","code":"d = {}\nprint(d['a'])","choices":["KeyError が発生する","IndexError が発生する","None と表示される","空行だけ表示される"],"a":0,"err":"KeyError","why":["正しい。辞書にないキーを読むと発生する。","IndexError はリストなどの添字が範囲外のとき。","None を返すのは d.get('a')。","例外になる。"],"check":"output"},{"id":"c9-01","ch":9,"lv":2,"q":"次のコードの出力はどれか。","code":"class D:\n    tricks = []\n    def add(self, x):\n        self.tricks.append(x)\na = D()\nb = D()\na.add(1)\nprint(b.tricks)","choices":["[1]","[]","AttributeError が発生する","None"],"a":0,"why":["正しい。クラス変数のリストは全インスタンスで共有される。","インスタンスごとに持ちたいなら __init__ で作る。","クラス変数として存在する。","リストが入っている。"],"check":"output"},{"id":"c9-02","ch":9,"lv":2,"q":"次のコードの出力はどれか。","code":"class C:\n    x = 1\nc = C()\nc.x = 2\nprint(C.x, c.x)","choices":["1 2","2 2","1 1","2 1"],"a":0,"why":["正しい。c.x = 2 はインスタンス側に x を作るだけ。","クラス変数は書き換わらない。","インスタンス側は2になっている。","クラスとインスタンスが逆。"],"check":"output"},{"id":"c9-03","ch":9,"lv":2,"q":"次のコードの出力はどれか。","code":"class A:\n    def f(self):\n        return 'A'\n    def g(self):\n        return self.f()\nclass B(A):\n    def f(self):\n        return 'B'\nprint(B().g())","choices":["B","A","AB","エラーになる"],"a":0,"why":["正しい。self は B のインスタンスなので B の f が呼ばれる。","A の中から呼んでも self の型で決まる。","呼ばれるのは片方だけ。","g は継承されている。"],"check":"output"},{"id":"c9-04","ch":9,"lv":3,"q":"次のコードを実行するとどうなるか。","code":"class C:\n    __x = 1\nprint(C.__x)","choices":["AttributeError が発生する","1 と表示される","SyntaxError が発生する","None と表示される"],"a":0,"err":"AttributeError","why":["正しい。先頭に __ が付く名前は _C__x に変換され、外からこの名前では読めない。","C._C__x なら 1 が読める。","文法としては正しい。","属性が見つからず例外になる。"],"check":"output"},{"id":"c10-01","ch":10,"lv":1,"q":"次のコードの出力はどれか。","code":"import math\nprint(math.floor(-2.5))","choices":["-3","-2","-2.5","2"],"a":0,"why":["正しい。floor は小さい方向へ丸める。","math.ceil(-2.5) の結果。","整数に丸められる。","符号は消えない。"],"check":"output"},{"id":"c10-02","ch":10,"lv":1,"q":"次のコードの出力はどれか。","code":"import re\nprint(re.findall(r'\\d+', 'a12b3'))","choices":["['12', '3']","['1', '2', '3']","[12, 3]","12"],"a":0,"why":["正しい。連続した数字のかたまりを文字列のリストで返す。","+ があるので連続した数字はまとまる。","結果は文字列で、数値にはならない。","全件をリストで返す。"],"check":"output"},{"id":"c10-03","ch":10,"lv":1,"q":"次のコードの出力はどれか。","code":"import statistics\nprint(statistics.median([1, 2, 3, 6]))","choices":["2.5","3","2","3.0"],"a":0,"why":["正しい。偶数個のときは真ん中2つの平均。","平均値 mean は 3 だが、これは中央値。","真ん中2つの片方だけではない。","平均値と勘違いした答え。"],"check":"output"},{"id":"c10-04","ch":10,"lv":2,"q":"random.sample(range(10), 3) の説明として正しいものはどれか。","choices":["0〜9から重複なしで3個選んだリストを返す","0〜9から重複ありで3個選んだリストを返す","0〜9を並べ替えたリストの全部を返す","0.0以上3.0未満の小数を返す"],"a":0,"why":["正しい。sample は重複なしで取り出す。","重複ありは random.choices。","全体の並べ替えは random.shuffle。","小数を返すのは random.random など。"],"verify":"import random\nfor _ in range(2000):\n    r = random.sample(range(10), 3)\n    assert isinstance(r, list) and len(r) == 3 and len(set(r)) == 3 and all(0 <= v <= 9 for v in r)"},{"id":"c10-05","ch":10,"lv":2,"q":"次のコードの出力はどれか。","code":"from datetime import date\nprint(date(2024, 3, 1) - date(2024, 2, 1))","choices":["29 days, 0:00:00","28 days, 0:00:00","1 month","29"],"a":0,"why":["正しい。2024年はうるう年で2月は29日。差は timedelta で表示される。","平年の2月と勘違いした答え。","月単位にはならない。","日数だけなら .days を使う。"],"check":"output"},{"id":"c10-06","ch":10,"lv":1,"q":"ワイルドカードでファイルの一覧を取得する標準モジュールはどれか。","choices":["glob","math","zlib","timeit"],"a":0,"why":["正しい。glob.glob('*.py') のように使う。","数学の関数のモジュール。","データ圧縮のモジュール。","処理時間の計測のモジュール。"],"verify":"import glob\nopen('w1.py', 'w').close()\nassert 'w1.py' in glob.glob('*.py')"},{"id":"c10-07","ch":10,"lv":2,"q":"python demo.py one two と実行したとき、sys.argv の内容はどれか。","choices":["['demo.py', 'one', 'two']","['one', 'two']","['python', 'demo.py', 'one', 'two']","'demo.py one two'"],"a":0,"why":["正しい。先頭はスクリプト名で、続けて引数が入る。","スクリプト名も含まれる。","python 自体は入らない。","1つの文字列ではなくリスト。"],"verify":"import subprocess, sys\nopen('demo.py', 'w').write('import sys\\nprint(sys.argv)\\n')\nr = subprocess.run([sys.executable, 'demo.py', 'one', 'two'], capture_output=True, text=True)\nassert r.stdout.strip() == \"['demo.py', 'one', 'two']\""},{"id":"c10-08","ch":10,"lv":2,"q":"docstring の中に書いた対話例を実行して検証する標準モジュールはどれか。","choices":["doctest","timeit","pprint","glob"],"a":0,"why":["正しい。doctest.testmod() で検証できる。","処理時間の計測。","見やすく整形して表示する。","ファイル一覧の取得。"],"verify":"import doctest\ndef av(v):\n    '''\n    >>> av([2, 4])\n    3.0\n    '''\n    return sum(v) / len(v)\nimport sys\nr = doctest.run_docstring_examples(av, {'av': av}, verbose=False)\nimport __main__\n__main__.av = av\nres = doctest.testmod(__main__)\nassert res.attempted == 1 and res.failed == 0"},{"id":"c11-01","ch":11,"lv":2,"q":"次のコードの出力はどれか。","code":"from collections import deque\nd = deque([1, 2])\nd.appendleft(0)\nprint(d.popleft(), list(d))","choices":["0 [1, 2]","2 [0, 1]","0 [0, 1, 2]","1 [0, 2]"],"a":0,"why":["正しい。左に0を足して、左から取り出している。","pop() で右から取り出した答え。","popleft は要素を取り除く。","先頭は appendleft した0。"],"check":"output"},{"id":"c11-02","ch":11,"lv":2,"q":"次のコードの出力はどれか。","code":"from decimal import Decimal\nprint(Decimal('0.1') + Decimal('0.2'))","choices":["0.3","0.30000000000000004","0.1","エラーになる"],"a":0,"why":["正しい。Decimal は10進数で正確に計算する。","float の 0.1 + 0.2 の結果。","足し算された結果になる。","Decimal どうしの足し算は問題ない。"],"check":"output"},{"id":"c12-01","ch":12,"lv":1,"q":"tutorial-env という仮想環境を作るコマンドはどれか。","choices":["python -m venv tutorial-env","pip install tutorial-env","python --venv tutorial-env","python -c venv tutorial-env"],"a":0,"why":["正しい。venv モジュールを -m で実行する。","その名前のパッケージを入れようとするだけ。","そのようなオプションはない。","-c はコード文字列を実行するオプション。"],"verify":"import subprocess, sys, os\nr = subprocess.run([sys.executable, '-m', 'venv', '--without-pip', 'tutorial-env'], capture_output=True, text=True)\nassert r.returncode == 0\nassert os.path.exists('tutorial-env/pyvenv.cfg')"},{"id":"c12-02","ch":12,"lv":2,"q":"requirements.txt に書かれたパッケージをまとめてインストールするコマンドはどれか。","choices":["pip install -r requirements.txt","pip install requirements.txt","pip freeze requirements.txt","pip show -r requirements.txt"],"a":0,"why":["正しい。-r でファイルを指定する。","-r がないと requirements.txt という名前のパッケージを探してしまう。","freeze は入っているパッケージの一覧を出すコマンド。","show はパッケージの情報を見るコマンド。"],"verify":"import subprocess, sys\nr = subprocess.run([sys.executable, '-m', 'pip', 'install', '--help'], capture_output=True, text=True)\nassert '--requirement' in r.stdout and '-r,' in r.stdout"},{"id":"c14-01","ch":14,"lv":2,"q":"対話環境の入力履歴が標準で保存されるファイルはどれか。","choices":["ユーザーディレクトリの .python_history","カレントディレクトリの history.py","Pythonのインストール先の log.txt","履歴は保存されない"],"a":0,"why":["正しい。次回の対話セッションでも使える。","そのようなファイルには保存されない。","そのようなファイルには保存されない。","標準で保存される。"]},{"id":"c14-02","ch":14,"lv":1,"q":"標準の対話環境で Tab キーを押したときの働きはどれか。","choices":["変数名やモジュール名の補完","入力中の行の実行","対話環境の終了","入力履歴の全消去"],"a":0,"why":["正しい。起動時に自動で有効になっている。","実行は Enter キー。","終了は exit() など。","Tab で履歴は消えない。"]}]</script>
+<script type="application/json" id="cheatdata">[{"ch":3,"t":"割り算は3種類","code":"print(7 / 2)\nprint(7 // 2)\nprint(7 % 2)\nprint(-7 // 2)","note":"/ は小数、// は小さい方向へ切り捨て、% は余り。","out":"3.5\n3\n1\n-4"},{"ch":3,"t":"スライスは「終わりの手前」まで","code":"s = 'Python'\nprint(s[1:4])\nprint(s[-2:])\nprint(s[10:] == '')","note":"範囲外でもスライスはエラーにならない。s[10] はIndexError。","out":"yth\non\nTrue"},{"ch":3,"t":"文字列は変更できない・リストはできる","code":"a = [1, 2, 3, 4]\na[1:3] = []\nprint(a)\nb = a\nb.append(9)\nprint(a)","note":"b = a はコピーではなく同じリストを指す。","out":"[1, 4]\n[1, 4, 9]"},{"ch":4,"t":"range は終わりを含まない","code":"print(list(range(2, 8, 3)))\nprint(list(range(5, 0, -2)))","note":"range(開始, 終わりの手前, 増分)。","out":"[2, 5]\n[5, 3, 1]"},{"ch":4,"t":"for の else","code":"for n in [1, 3]:\n    if n == 2:\n        break\nelse:\n    print('breakしなかった')","note":"break せず最後まで回ったときだけ else が動く。","out":"breakしなかった"},{"ch":4,"t":"既定値は定義時に1回だけ作られる","code":"def f(x, L=[]):\n    L.append(x)\n    return L\nf(1)\nprint(f(2))","note":"リストを既定値にすると呼び出しの間で共有される。","out":"[1, 2]"},{"ch":4,"t":"*args と **kwargs","code":"def f(*a, **k):\n    print(a, k)\nf(1, 2, x=3)\ndef g(x, *, y):\n    return x + y\nprint(g(1, y=2))","note":"* より後ろはキーワードでしか渡せない。","out":"(1, 2) {'x': 3}\n3"},{"ch":5,"t":"リストのメソッド","code":"a = [1, 2]\na.append([3])\nprint(a)\nb = [1, 2]\nb.extend([3])\nprint(b)\nprint(b.pop(0), b)\nprint(b.sort())","note":"sort は戻り値が None。sorted(b) は新しいリストを返す。","out":"[1, 2, [3]]\n[1, 2, 3]\n1 [2, 3]\nNone"},{"ch":5,"t":"内包表記","code":"print([x * 2 for x in range(4) if x % 2])\nprint({x for x in 'aab'} == {'a', 'b'})","note":"[式 for 変数 in 範囲 if 条件]。","out":"[2, 6]\nTrue"},{"ch":5,"t":"タプル・集合・辞書の入口","code":"print(type((1)).__name__, type((1,)).__name__)\nprint(type({}).__name__, type(set()).__name__)\nprint(list(zip([1, 2, 3], 'ab')))","note":"1要素のタプルはカンマが必要。{} は辞書。","out":"int tuple\ndict set\n[(1, 'a'), (2, 'b')]"},{"ch":8,"t":"try の動く順番","code":"try:\n    int('x')\nexcept ValueError:\n    print('except')\nelse:\n    print('else')\nfinally:\n    print('finally')","note":"例外なし→else、例外あり→except。finally はどちらでも動く。","out":"except\nfinally"},{"ch":8,"t":"よく出る例外の見分け方","code":"tests = ['1 / 0', \"'1' + 1\", \"int('x')\", '[][0]', \"{}['a']\", 'zzz']\nfor t in tests:\n    try:\n        eval(t)\n    except Exception as e:\n        print(type(e).__name__)","note":"上から ZeroDivisionError / TypeError / ValueError / IndexError / KeyError / NameError。","out":"ZeroDivisionError\nTypeError\nValueError\nIndexError\nKeyError\nNameError"},{"ch":9,"t":"クラス変数とインスタンス変数","code":"class C:\n    x = 1\nc = C()\nc.x = 2\nprint(C.x, c.x)","note":"共有したくないものは __init__ の中で self に作る。","out":"1 2"},{"ch":10,"t":"標準ライブラリの役割","code":"import math, re, statistics\nprint(math.floor(-2.5), math.ceil(-2.5))\nprint(re.findall(r'\\d+', 'a12b3'))\nprint(statistics.mean([1, 2, 3, 6]), statistics.median([1, 2, 3, 6]))","note":"ほかに os（OS操作）、glob（ファイル一覧）、sys（argv）、random、datetime、zlib、timeit、doctest、unittest。","out":"-3 -2\n['12', '3']\n3 2.5"}]</script>
+<script>
+const Q=JSON.parse(document.getElementById('qdata').textContent);
+const CHEAT=JSON.parse(document.getElementById('cheatdata').textContent);
+const CH={1:['食欲をそそってみようか',1,'appetite'],2:['Pythonインタープリタの使い方',1,'interpreter'],3:['気楽な入門編',6,'introduction'],4:['制御構造ツール',9,'controlflow'],5:['データ構造',7,'datastructures'],6:['モジュール',2,'modules'],7:['入出力',1,'inputoutput'],8:['エラーと例外',4,'errors'],9:['クラス',2,'classes'],10:['標準ライブラリめぐり',4,'stdlib'],11:['標準ライブラリめぐりPartII',1,'stdlib2'],12:['仮想環境とパッケージ',1,'venv'],13:['次はなに?',0,'whatnow'],14:['対話環境の入力行編集とヒストリ置換',1,'interactive']};
+const HOT=[3,4,5,8,10];
+const CHS=Object.keys(CH).map(Number);
+const url=c=>'https://docs.python.org/ja/3/tutorial/'+CH[c][2]+'.html';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const KEY='python_kiso_v1',SK=KEY+'_session';
+const def=()=>({ans:{},streak:0,best:0,plan:{},read:{},mocks:[],start:null});
+function load(k,d){try{const s=localStorage.getItem(k);return s?JSON.parse(s):d}catch(e){return d}}
+function put(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function del(k){try{localStorage.removeItem(k)}catch(e){}}
+let S=Object.assign(def(),load(KEY,{}));
+const save=()=>put(KEY,S);
+let sel=new Set(),T=null,timerId=null,lastWrong=[];
+const byId=Object.fromEntries(Q.map(q=>[q.id,q]));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',2600)}
+function hl(code){
+  const re=/(#.*$)|('(?:\\.|[^'\\\n])*')|\b(def|class|return|if|else|elif|for|in|while|try|except|finally|raise|import|from|as|with|lambda|and|or|not|pass|break|continue|None|True|False)\b|\b(\d+(?:\.\d+)?)\b/gm;
+  let out='',i=0,m;
+  while((m=re.exec(code))){out+=esc(code.slice(i,m.index));const c=m[1]?'c':m[2]?'s':m[3]?'k':'n';out+='<span class="tk-'+c+'">'+esc(m[0])+'</span>';i=m.index+m[0].length}
+  return out+esc(code.slice(i));
+}
+function show(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $('s-'+n).classList.add('active');
+  $('nav').style.display=n==='quiz'?'none':'';
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.id==='n-'+n));
+  ({home:renderHome,plan:renderPlan,cheat:()=>renderCheat($('cheat-q').value),range:renderRange,stats:renderStats}[n]||(()=>{}))();
+  window.scrollTo(0,0);
+}
+/* HOME */
+function accuracy(){let n=0,o=0;Object.values(S.ans).forEach(a=>{n+=a.n;o+=a.ok});return n?Math.round(o/n*100):null}
+function dayNo(){if(!S.start)return null;const a=new Date(S.start+'T00:00:00'),b=new Date();b.setHours(0,0,0,0);return Math.floor((b-a)/864e5)+1}
+function renderHome(){
+  $('h-seen').textContent=Object.keys(S.ans).length;$('h-seen-l').textContent='解いた問題 /'+Q.length;
+  const ac=accuracy();$('h-acc').textContent=ac===null?'—':ac+'%';$('h-streak').textContent=S.streak;
+  const ss=load(SK,null);
+  $('resume').innerHTML=ss?'<div class="banner"><span style="flex:1">'+esc(modeName(ss.mode))+'の続き（'+(ss.i+1)+' / '+ss.ids.length+'問目）</span><button onclick="resume()">再開</button></div>':'';
+  const d=dayNo();let h='';
+  if(d&&d>=1&&d<=14){const p=PLAN.find(x=>x.d.includes(d));h='<div class="card today"><b>'+d+'日目：'+esc(p.t)+'</b><div class="note">'+esc(p.b)+'</div></div>'}
+  else if(!S.start){h='<div class="card today"><b>はじめての方へ</b><div class="note">「計画」タブで開始日を決めると、毎日やることが表示されます。</div></div>'}
+  $('today').innerHTML=h;
+  $('chips').innerHTML=CHS.filter(c=>Q.some(q=>q.ch===c)).map(c=>{const hot=HOT.includes(c),st=chStat(c);return '<button class="chip'+(hot?' hot':'')+(sel.has(c)?' on':'')+'" onclick="toggleCh('+c+')"><i>'+c+'章</i><span>'+esc(CH[c][0])+'</span><em>'+(st.n?st.pct+'%':CH[c][1]+'問出題')+'</em></button>'}).join('');
+  $('chapter-start').disabled=!sel.size;
+}
+function chStat(c){let n=0,ok=0,seen=0;Q.filter(q=>q.ch===c).forEach(q=>{const a=S.ans[q.id];if(a){n+=a.n;ok+=a.ok;seen++}});return{n,ok,seen,pct:n?Math.round(ok/n*100):0}}
+function toggleCh(c){sel.has(c)?sel.delete(c):sel.add(c);renderHome()}
+function modeName(m){return{basic:'全体像ドリル',all:'問題集モード',mock:'本番模試',weak:'弱点集中',ch:'章別学習',retry:'復習'}[m]||m}
+/* START */
+function priority(list){const hot=list.filter(q=>HOT.includes(q.ch)),rest=list.filter(q=>!HOT.includes(q.ch));
+  const least=a=>shuffle(a).sort((x,y)=>(S.ans[x.id]?.n||0)-(S.ans[y.id]?.n||0));return least(hot).concat(least(rest))}
+function mockIds(){let ids=[];CHS.forEach(c=>{const pool=shuffle(Q.filter(q=>q.ch===c)).sort((a,b)=>(S.ans[a.id]?.m||0)-(S.ans[b.id]?.m||0));ids=ids.concat(pool.slice(0,CH[c][1]).map(q=>q.id))});return shuffle(ids)}
+function weakIds(){return Q.filter(q=>{const a=S.ans[q.id];return a&&(a.last===false||(a.n>=2&&a.ok/a.n<.7))}).map(q=>q.id)}
+function begin(mode,ids){
+  if(!ids.length){toast(mode==='weak'?'まだ間違えた問題がありません。先に問題集を解きましょう。':'問題がありません。');return}
+  const order={};ids.forEach(id=>order[id]=shuffle([0,1,2,3]));
+  T={mode,ids,order,i:0,answers:{},shown:{},startedAt:Date.now(),endAt:mode==='mock'?Date.now()+60*60*1000:null};
+  persist();show('quiz');renderQ();startTimer();
+}
+function start(m){
+  if(m==='basic')begin(m,priority(Q.filter(q=>q.lv===1)).map(q=>q.id));
+  else if(m==='all')begin(m,priority(Q).map(q=>q.id));
+  else if(m==='mock')begin(m,mockIds());
+  else if(m==='weak')begin(m,shuffle(weakIds()));
+}
+function startChapters(){begin('ch',priority(Q.filter(q=>sel.has(q.ch))).map(q=>q.id))}
+function retryWrong(){begin('retry',shuffle(lastWrong))}
+function openMock(){$('mock-ok').checked=false;$('mock-go').disabled=true;$('mock-modal').classList.add('on')}
+function closeMock(){$('mock-modal').classList.remove('on')}
+const persist=()=>put(SK,T);
+function pause(){stopTimer();persist();T=null;show('home')}
+function resume(){const s=load(SK,null);if(!s)return;T=s;if(T.endAt&&Date.now()>=T.endAt){finish();return}show('quiz');renderQ();startTimer()}
+function startTimer(){stopTimer();if(!T||!T.endAt){$('q-timer').textContent='';return}const f=()=>{if(!T)return;const r=Math.max(0,T.endAt-Date.now()),s=Math.ceil(r/1000);$('q-timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(r<=0)finish()};f();timerId=setInterval(f,1000)}
+function stopTimer(){clearInterval(timerId);timerId=null}
+/* QUIZ */
+const isMock=()=>T.mode==='mock';
+function monoChoice(q,c){return !!q.code&&!/が発生|と表示|エラーに|何も表示|空行|空文字/.test(c)}
+function renderQ(){
+  const id=T.ids[T.i],q=byId[id],ans=T.answers[id],shown=!isMock()&&T.shown[id];
+  $('q-count').textContent=(T.i+1)+' / '+T.ids.length;
+  $('q-bar').style.width=((T.i+1)/T.ids.length*100)+'%';
+  $('q-meta').innerHTML='<span class="tag'+(HOT.includes(q.ch)?' hot':'')+'">'+q.ch+'章 '+esc(CH[q.ch][0])+'</span><span class="tag">'+modeName(T.mode)+'</span>';
+  $('q-text').textContent=q.q;
+  $('q-code').innerHTML=q.code?'<pre class="code">'+hl(q.code)+'</pre>':'';
+  $('q-choices').innerHTML=T.order[id].map((oi,k)=>{
+    let cls='';if(shown){if(oi===q.a)cls=' ok';else if(oi===ans)cls=' ng'}else if(oi===ans)cls=' sel';
+    const c=q.choices[oi],mk=shown?(oi===q.a?'○':'×'):String.fromCharCode(65+k);
+    return '<button class="choice'+cls+'" '+(shown?'disabled':'')+' onclick="pick('+oi+')"><span class="mark">'+mk+'</span><span style="flex:1;min-width:0"><span class="txt'+(monoChoice(q,c)?' mono':'')+'">'+esc(c)+'</span>'+(shown?'<div class="why">'+esc(q.why[oi])+'</div>':'')+'</span></button>';
+  }).join('');
+  let a='';
+  if(isMock()){
+    a='<div class="row"><button class="btn sub" '+(T.i===0?'disabled':'')+' onclick="move(-1)">前へ</button>'+(T.i<T.ids.length-1?'<button class="btn" onclick="move(1)">次へ</button>':'<button class="btn" onclick="confirmFinish()">採点する</button>')+'</div><div class="note" style="margin-top:8px" id="mock-info">回答済み '+Object.keys(T.answers).length+' / '+T.ids.length+'</div>';
+    if(T.i<T.ids.length-1)a+='<button class="btn sub" style="margin-top:8px" onclick="confirmFinish()">ここで採点する</button>';
+  }else if(shown){
+    const ok=ans===q.a;
+    a='<div class="result '+(ok?'ok':'ng')+'">'+(ok?'正解':'不正解')+'</div>'+(ok?'':'<div class="note">なぜ間違えたかを確かめて、該当の章に戻りましょう。</div>')+'<a class="read" href="'+url(q.ch)+'" target="_blank" rel="noopener">チュートリアル '+q.ch+'章を読む ↗</a><button class="btn" onclick="next()">'+(T.i<T.ids.length-1?'次の問題':'結果を見る')+'</button>';
+  }
+  $('q-after').innerHTML=a;
+}
+function pick(oi){
+  const id=T.ids[T.i],q=byId[id];
+  if(isMock()){T.answers[id]=oi;persist();renderQ();return}
+  if(T.shown[id])return;
+  T.answers[id]=oi;T.shown[id]=true;record(q,oi===q.a,false);persist();renderQ();
+}
+function record(q,ok,mock){const a=S.ans[q.id]||(S.ans[q.id]={n:0,ok:0,m:0,last:null});a.n++;if(ok){a.ok++;S.streak++;S.best=Math.max(S.best,S.streak)}else S.streak=0;a.last=ok;if(mock)a.m=(a.m||0)+1;save()}
+function move(d){T.i+=d;persist();renderQ();window.scrollTo(0,0)}
+function next(){if(T.i<T.ids.length-1){T.i++;persist();renderQ();window.scrollTo(0,0)}else finish()}
+function confirmFinish(){const left=T.ids.length-Object.keys(T.answers).length;if(left>0&&!confirmFinish.armed){confirmFinish.armed=true;toast('未回答が'+left+'問あります。もう一度押すと採点します。');setTimeout(()=>confirmFinish.armed=false,4000);return}confirmFinish.armed=false;finish()}
+function finish(){
+  stopTimer();const R=T;T=null;del(SK);
+  const mock=R.mode==='mock',qs=R.ids.map(i=>byId[i]);
+  let ok=0;const per={},wrong=[];
+  qs.forEach(q=>{const c=R.answers[q.id]===q.a;if(c)ok++;else wrong.push(q);if(mock)record(q,c,true);per[q.ch]=per[q.ch]||[0,0];per[q.ch][1]++;if(c)per[q.ch][0]++});
+  const total=qs.length,pct=Math.round(ok/total*100);
+  $('r-pct').textContent=pct+'%';$('r-frac').textContent=ok+' / '+total+' 問正解';
+  $('r-pass').innerHTML=mock?'<span class="pass '+(ok>=28?'ok':'ng')+'">'+(ok>=28?'合格ライン（28問以上）':'合格ラインまであと'+(28-ok)+'問')+'</span>':'';
+  if(mock){S.mocks.push({d:new Date().toISOString().slice(0,10),ok,total,sec:Math.round((Date.now()-R.startedAt)/1000)});save()}
+  $('r-ch').innerHTML=Object.keys(per).map(Number).sort((a,b)=>a-b).map(c=>'<div class="chrow"><span class="name">'+c+'章 '+esc(CH[c][0])+'</span><span class="prog"><div style="width:'+per[c][0]/per[c][1]*100+'%"></div></span><span class="val">'+per[c][0]+' / '+per[c][1]+'</span></div>').join('');
+  lastWrong=wrong.map(q=>q.id);
+  $('r-retry').style.display=wrong.length?'':'none';$('r-wrong-wrap').style.display=wrong.length?'':'none';
+  $('r-wrong').innerHTML=wrong.map(q=>{const a=R.answers[q.id];return '<div class="card"><div class="qmeta" style="margin-top:0"><span class="tag">'+q.ch+'章 '+esc(CH[q.ch][0])+'</span></div><div style="font-weight:700;margin-bottom:6px">'+esc(q.q)+'</div>'+(q.code?'<pre class="code">'+hl(q.code)+'</pre>':'')+q.choices.map((c,i)=>'<div style="margin-bottom:6px;font-size:13.6px"><b style="color:'+(i===q.a?'var(--ok)':i===a?'var(--ng)':'var(--muted)')+'">'+(i===q.a?'正解':i===a?'あなたの回答':'不正解')+'</b> <span style="white-space:pre-wrap">'+esc(c)+'</span><div class="note">'+esc(q.why[i])+'</div></div>').join('')+'<a class="read" href="'+url(q.ch)+'" target="_blank" rel="noopener">チュートリアル '+q.ch+'章を読む ↗</a></div>'}).join('');
+  show('result');
+}
+/* PLAN */
+const PLAN=[
+ {step:'ステップ1　基礎学習（目安2〜3日）',d:[1],t:'入門教材で全体像をつかむ',b:'録音元の動画の概要欄にある無料のPython入門を見ながら、printなどを手を動かして試す。'},
+ {d:[2],t:'リストなど基本文法を試す',b:'暗記・完璧は目指さない。アプリの「全体像ドリル」で確認。'},
+ {d:[3],t:'入門を一通り終える',b:'例外処理まで含めて、全体をざっと見る。'},
+ {step:'ステップ2　公式問題集（目安4〜5日・2周）',d:[4],t:'1周目：3章・4章',b:'間違えたらチュートリアルの該当章を読む。メモなしで解く。'},
+ {d:[5],t:'1周目：5章・8章',b:'不正解の選択肢がなぜ違うかまで確認。'},
+ {d:[6],t:'1周目：10章とその他の章',b:'アプリの「問題集モード」でも確認。'},
+ {d:[7],t:'2周目：前半',b:'解けなかった問題を中心に。'},
+ {d:[8],t:'2周目：後半',b:'重点章はチュートリアルを読み返す。'},
+ {step:'ステップ3　模擬試験（4日）',d:[9],t:'模試1回目：DIVE INTO EXAM',b:'解く → 解けなかった問題を復習 → 該当章を読む、を1セット。'},
+ {d:[10],t:'模試2回目：PRIME STUDY',b:'点数で満足せず、間違えた原因を特定する。'},
+ {d:[11],t:'模試3回目：PRIME STUDY',b:'解く → 復習 → 該当章を読む。'},
+ {d:[12],t:'模試4回目：PRIME STUDY',b:'解く → 復習 → 該当章を読む。'},
+ {step:'予備日（録音にはなく、アプリで足した2日）',d:[13],t:'弱点集中と本番模試',b:'アプリの「弱点集中」と「本番模試」で仕上げ。'},
+ {d:[14],t:'最後の確認',b:'早見表を読み直し、受験の準備をする。'}
+];
+function renderPlan(){
+  const d=dayNo();
+  $('plan-start').innerHTML=S.start?'<div class="note" style="margin:12px 0">開始日：'+esc(S.start)+(d>=1&&d<=14?'（今日は'+d+'日目）':'')+' <button class="qhome" onclick="setStart(true)">今日に変更</button></div>':'<button class="btn" onclick="setStart()">今日を1日目にする</button>';
+  $('plan').innerHTML=PLAN.map(p=>{const n=p.d[0],done=S.plan[n];return (p.step?'<div class="step">'+esc(p.step)+'</div>':'')+'<label class="day'+(n===d?' now':'')+(done?' done':'')+'"><input type="checkbox" '+(done?'checked':'')+' onchange="togglePlan('+n+',this.checked)"><div><b>'+n+'日目：'+esc(p.t)+'</b><span>'+esc(p.b)+'</span></div></label>'}).join('');
+}
+function setStart(){S.start=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);save();renderPlan()}
+function togglePlan(n,v){S.plan[n]=v;save();renderPlan()}
+/* CHEAT */
+let openCh=new Set();
+function renderCheat(f){
+  f=(f||'').trim().toLowerCase();
+  const html=[...new Set(CHEAT.map(c=>c.ch))].map(ch=>{
+    const items=CHEAT.filter(c=>c.ch===ch&&(!f||(c.t+c.note+c.code).toLowerCase().includes(f)));
+    if(!items.length)return '';
+    const open=f||openCh.has(ch);
+    return '<div class="acc'+(open?' open':'')+'"><button onclick="toggleCheat('+ch+')">'+ch+'章 '+esc(CH[ch][0])+'<em>'+items.length+'件 '+(open?'▲':'▼')+'</em></button><div class="body">'+items.map(c=>'<div class="item"><h4>'+esc(c.t)+'</h4><pre class="code">'+hl(c.code)+'</pre><div class="out">実行結果</div><pre class="code res">'+esc(c.out)+'</pre><div class="note">'+esc(c.note)+'</div></div>').join('')+'</div></div>'}).join('');
+  $('cheat').innerHTML=html||'<p class="note">見つかりませんでした。</p>';
+}
+function toggleCheat(c){openCh.has(c)?openCh.delete(c):openCh.add(c);renderCheat($('cheat-q').value)}
+/* RANGE */
+function renderRange(){
+  $('range').innerHTML='<tr><th>章</th><th>内容</th><th class="n">出題</th><th class="n">率</th><th class="n">正答</th><th>読了</th></tr>'+CHS.map(c=>{const st=chStat(c);return '<tr'+(HOT.includes(c)?' class="hot"':'')+'><td>'+c+'</td><td><a href="'+url(c)+'" target="_blank" rel="noopener">'+esc(CH[c][0])+'</a></td><td class="n">'+CH[c][1]+'問</td><td class="n">'+(CH[c][1]/40*100).toFixed(1)+'%</td><td class="n">'+(st.n?st.pct+'%':'—')+'</td><td><input type="checkbox" aria-label="'+c+'章を読んだ" '+(S.read[c]?'checked':'')+' onchange="S.read['+c+']=this.checked;save()"></td></tr>'}).join('');
+}
+/* STATS */
+function renderStats(){
+  const r1=Q.filter(q=>(S.ans[q.id]?.n||0)>=1).length,r2=Q.filter(q=>(S.ans[q.id]?.n||0)>=2).length,ac=accuracy();
+  let h='<div class="sec">進み具合</div><div class="stats"><div class="stat"><b>'+r1+'</b><span>1周目 /'+Q.length+'</span></div><div class="stat"><b>'+r2+'</b><span>2周目 /'+Q.length+'</span></div><div class="stat"><b>'+(ac===null?'—':ac+'%')+'</b><span>正答率</span></div></div>';
+  h+='<div class="sec">章ごとの正答率</div><div class="card">'+CHS.filter(c=>Q.some(q=>q.ch===c)).map(c=>{const st=chStat(c);return '<div class="chrow"><span class="name">'+c+'章 '+esc(CH[c][0])+'</span><span class="prog"><div style="width:'+st.pct+'%"></div></span><span class="val">'+(st.n?st.pct+'%':'未回答')+'</span></div>'}).join('')+'</div>';
+  h+='<div class="sec">本番模試の記録</div><div class="card">'+(S.mocks.length?S.mocks.slice().reverse().map(m=>'<div class="chrow"><span class="name">'+esc(m.d)+'</span><span class="val">'+m.ok+' / '+m.total+'</span><span class="val" style="color:'+(m.ok>=28?'var(--ok)':'var(--ng)')+'">'+(m.ok>=28?'合格圏':'未達')+'</span></div>').join(''):'<p class="note">まだ受けていません。</p>')+'</div>';
+  $('stats-body').innerHTML=h;resetAll.armed=false;$('reset-btn').textContent='記録を消す';
+}
+function resetAll(){if(!resetAll.armed){resetAll.armed=true;$('reset-btn').textContent='もう一度押すと消します';return}S=def();save();del(SK);renderStats();toast('記録を消しました。')}
+renderHome();
+</script>
+</body>
+</html>
