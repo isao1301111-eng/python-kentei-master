@@ -4,11 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Python基礎Master</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f7fb;--card:#fff;--card2:#eef4fb;--primary:#2b5f8f;--primary-dark:#1d4568;--gold:#a97f00;--gold-bg:#fff6d6;--ok:#0a7d46;--ok-bg:#e6f6ee;--ng:#c0341d;--ng-bg:#fdecE8;--text:#14222f;--muted:#566776;--border:#d8e2ec;--code:#10202e;--radius:14px;--shadow:0 2px 10px rgba(20,50,80,.08)}
+/* 色・背景はG検定マスターと同じ（赤×金・クリーム地） */
+:root{--bg:#fff8f5;--card:#fff;--card2:#fff3ee;--primary:#cc2800;--primary-dark:#991e00;--gold:#b8860b;--gold-bg:rgba(184,134,11,.12);--ok:#008844;--ok-bg:rgba(0,136,68,.1);--ng:#cc2200;--ng-bg:rgba(204,34,0,.1);--text:#1c0800;--muted:#7a5a50;--border:rgba(204,40,0,.14);--code:#2a1208;--radius:14px;--shadow:0 2px 12px rgba(100,30,0,.1)}
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{font-family:system-ui,-apple-system,"Segoe UI","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+body{font-family:'Inter','Noto Sans JP',system-ui,-apple-system,"Segoe UI","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
 button{font:inherit;color:inherit;cursor:pointer}
 a{color:var(--primary)}
 .wrap{max-width:680px;margin:0 auto;padding:0 16px}
@@ -127,6 +129,58 @@ tr.hot td:first-child{color:var(--ng);font-weight:800}
 .nav button.on{color:var(--primary);box-shadow:inset 0 3px 0 var(--primary)}
 .toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);background:#14222f;color:#fff;font-size:13.4px;padding:9px 16px;border-radius:10px;z-index:70;display:none;max-width:90%}
 @media(max-width:360px){.modes{grid-template-columns:1fr}.chips{grid-template-columns:1fr}.mode{min-height:0}}
+/* ===== G検定マスターと同じ見た目 ===== */
+.head{background:#fff;border-bottom:2px solid rgba(204,40,0,.15);box-shadow:0 2px 8px rgba(100,30,0,.08)}
+.logo{font-size:20px;font-weight:900;background:linear-gradient(90deg,var(--primary),var(--gold),var(--primary));background-size:200%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:logoShine 4s linear infinite;letter-spacing:.5px;white-space:nowrap}
+.head .badge{overflow:hidden;text-overflow:ellipsis;min-width:0}
+@keyframes logoShine{0%{background-position:0%}100%{background-position:200%}}
+.badge{color:var(--primary);background:rgba(204,40,0,.1);border:1px solid rgba(204,40,0,.3);padding:3px 10px}
+/* AI侍くんのヒーロー */
+.samurai-hero{display:flex;align-items:center;padding:16px 0;min-height:240px;overflow:hidden;background:linear-gradient(135deg,rgba(255,240,235,.6) 0%,rgba(255,255,255,0) 60%)}
+.samurai-text{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding-right:8px}
+.samurai-float{order:-1;flex-shrink:0;width:46%;display:flex;align-items:center;justify-content:center;animation:floatBob 3s ease-in-out infinite;pointer-events:none}
+@keyframes floatBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.samurai-float img{width:100%;max-width:280px;height:auto;object-fit:contain;filter:drop-shadow(3px 6px 16px rgba(204,40,0,.4)) drop-shadow(0 0 28px rgba(184,134,11,.25))}
+.hero h1{font-size:24px;font-weight:800;line-height:1.25;margin-bottom:8px}
+.hero h1 b{background:linear-gradient(90deg,var(--primary),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}
+.speech-bubble{background:var(--card);border:1.5px solid rgba(184,134,11,.35);border-radius:12px;padding:9px 13px;display:inline-block;font-size:13px;font-weight:600;line-height:1.5;box-shadow:var(--shadow);margin-bottom:6px;align-self:flex-start}
+.hero p{font-size:12px}
+/* カード・ボタン */
+.stat{box-shadow:var(--shadow)}
+.stat b{font-size:26px;font-weight:800}
+.sec{letter-spacing:1px}
+.mode{transition:all .2s}
+.mode:hover{border-color:var(--primary);background:var(--card2);transform:translateY(-2px)}
+.chip{box-shadow:var(--shadow)}
+.chip.on{border-color:var(--gold);background:rgba(255,215,0,.08)}
+.btn{background:linear-gradient(135deg,var(--primary-dark),var(--primary),#e83500);border:2px solid var(--gold);box-shadow:0 0 14px rgba(204,40,0,.3);border-radius:var(--radius)}
+.btn:hover{background:linear-gradient(135deg,var(--primary-dark),var(--primary),#e83500);opacity:.9}
+.btn:disabled{background:#d9c4bc;border-color:#d9c4bc;box-shadow:none;opacity:1}
+.btn.sub{background:var(--card);color:var(--text);border:1px solid var(--border);box-shadow:none}
+.btn.sub:hover{background:var(--card2)}
+.banner{background:linear-gradient(135deg,rgba(204,40,0,.08),rgba(184,134,11,.08));border:1.5px solid rgba(204,40,0,.25);box-shadow:var(--shadow)}
+.banner button{background:var(--primary)}
+.choice{border-width:1.5px;box-shadow:var(--shadow)}
+.choice:hover:not(:disabled){background:var(--card2)}
+.qhome{background:none;border:1.5px solid var(--border);color:var(--muted)}
+.qhome:hover{border-color:var(--primary);color:var(--primary)}
+.timer{color:var(--gold)}
+.day.now{background:#fffaf0}
+.score b{display:inline-flex;align-items:center;justify-content:center;width:130px;height:130px;border-radius:50%;border:4px solid var(--primary);background:var(--card2);box-shadow:0 0 20px rgba(204,40,0,.2);font-size:36px;font-weight:800}
+/* 早見表の章見出し（G検定のチートシートと同じ赤帯） */
+.acc{border-radius:var(--radius);box-shadow:var(--shadow)}
+.acc>button{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff}
+.acc>button em{color:rgba(255,255,255,.85)}
+.acc>button:hover{opacity:.92}
+.acc .body{padding-top:4px}
+.item:first-child{border-top:0}
+.search{border:1.5px solid var(--border);border-radius:var(--radius)}
+.search:focus{outline:none;border-color:var(--primary)}
+/* 下のナビ */
+.nav{border-top:2px solid rgba(204,40,0,.15);box-shadow:0 -2px 10px rgba(100,30,0,.08)}
+.nav button{color:#bba090;font-size:10.5px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.nav button .icon{font-size:21px;line-height:1.1}
+.nav button.on{color:var(--gold);box-shadow:none}
 </style>
 </head>
 <body>
@@ -134,7 +188,7 @@ tr.hot td:first-child{color:var(--ng);font-weight:800}
 <section class="screen active" id="s-home">
   <header class="head"><div class="wrap"><span class="logo">Python基礎Master</span><span class="badge">Python 3 エンジニア認定基礎試験</span></div></header>
   <main class="wrap">
-    <div class="hero"><h1>2週間で<b>合格ライン</b>へ</h1><p>基礎学習 → 問題集 → 模擬試験の3段階で進めるアプリ。録音の学習法に沿っています。</p><p class="note" style="margin-top:4px">個人が作った非公式の学習アプリです。試験の主催団体とは関係ありません。問題はすべて自作です。</p></div>
+    <div class="hero samurai-hero"><div class="samurai-text"><h1>🐍 2週間で<b>合格ライン</b>へ</h1><div class="speech-bubble">一緒にPython試験を<span style="color:var(--primary);font-weight:800">合格</span>しよう！🔥</div><p>基礎学習 → 問題集 → 模擬試験の3段階で進めるアプリ。録音の学習法に沿っています。</p><p class="note" style="margin-top:4px">個人が作った非公式の学習アプリです。試験の主催団体とは関係ありません。問題はすべて自作です。</p></div><div class="samurai-float"><img src="ai-samurai-transparent.png" alt="AI侍くん"></div></div>
     <div id="resume"></div>
     <div id="today"></div>
     <div class="stats">
@@ -234,11 +288,11 @@ tr.hot td:first-child{color:var(--ng);font-weight:800}
 </section>
 
 <nav class="nav" id="nav"><div class="in">
-  <button id="n-home" class="on" onclick="show('home')">ホーム</button>
-  <button id="n-plan" onclick="show('plan')">計画</button>
-  <button id="n-cheat" onclick="show('cheat')">早見表</button>
-  <button id="n-range" onclick="show('range')">出題範囲</button>
-  <button id="n-stats" onclick="show('stats')">統計</button>
+  <button id="n-home" class="on" onclick="show('home')"><span class="icon">🏠</span>ホーム</button>
+  <button id="n-plan" onclick="show('plan')"><span class="icon">🗓️</span>計画</button>
+  <button id="n-cheat" onclick="show('cheat')"><span class="icon">📋</span>早見表</button>
+  <button id="n-range" onclick="show('range')"><span class="icon">📖</span>出題範囲</button>
+  <button id="n-stats" onclick="show('stats')"><span class="icon">📊</span>統計</button>
 </div></nav>
 
 <div class="modal" id="mock-modal"><div class="box">
@@ -382,15 +436,15 @@ function finish(){
 }
 /* PLAN */
 const PLAN=[
- {step:'ステップ1　基礎学習（目安2〜3日）',d:[1],t:'入門教材で全体像をつかむ',b:'録音元の動画の概要欄にある無料のPython入門を見ながら、printなどを手を動かして試す。'},
+ {step:'ステップ1 基礎学習（目安2〜3日）',d:[1],t:'入門教材で全体像をつかむ',b:'録音元の動画の概要欄にある無料のPython入門を見ながら、printなどを手を動かして試す。'},
  {d:[2],t:'リストなど基本文法を試す',b:'暗記・完璧は目指さない。アプリの「全体像ドリル」で確認。'},
  {d:[3],t:'入門を一通り終える',b:'例外処理まで含めて、全体をざっと見る。'},
- {step:'ステップ2　公式問題集（目安4〜5日・2周）',d:[4],t:'1周目：3章・4章',b:'間違えたらチュートリアルの該当章を読む。メモなしで解く。'},
+ {step:'ステップ2 公式問題集（目安4〜5日・2周）',d:[4],t:'1周目：3章・4章',b:'間違えたらチュートリアルの該当章を読む。メモなしで解く。'},
  {d:[5],t:'1周目：5章・8章',b:'不正解の選択肢がなぜ違うかまで確認。'},
  {d:[6],t:'1周目：10章とその他の章',b:'アプリの「問題集モード」でも確認。'},
  {d:[7],t:'2周目：前半',b:'解けなかった問題を中心に。'},
  {d:[8],t:'2周目：後半',b:'重点章はチュートリアルを読み返す。'},
- {step:'ステップ3　模擬試験（4日）',d:[9],t:'模試1回目：DIVE INTO EXAM',b:'解く → 解けなかった問題を復習 → 該当章を読む、を1セット。'},
+ {step:'ステップ3 模擬試験（4日）',d:[9],t:'模試1回目：DIVE INTO EXAM',b:'解く → 解けなかった問題を復習 → 該当章を読む、を1セット。'},
  {d:[10],t:'模試2回目：PRIME STUDY',b:'点数で満足せず、間違えた原因を特定する。'},
  {d:[11],t:'模試3回目：PRIME STUDY',b:'解く → 復習 → 該当章を読む。'},
  {d:[12],t:'模試4回目：PRIME STUDY',b:'解く → 復習 → 該当章を読む。'},
