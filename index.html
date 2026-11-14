@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Python基礎Master</title>
+<meta name="theme-color" content="#161312">
+<meta name="color-scheme" content="dark">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* 色・背景はG検定マスターと同じ（赤×金・クリーム地） */
@@ -181,6 +183,37 @@ tr.hot td:first-child{color:var(--ng);font-weight:800}
 .nav button{color:#bba090;font-size:10.5px;display:flex;flex-direction:column;align-items:center;gap:2px}
 .nav button .icon{font-size:21px;line-height:1.1}
 .nav button.on{color:var(--gold);box-shadow:none}
+/* ===== 暗い配色（夜に携帯で見ても目に優しいように） =====
+   真っ白な文字・真っ黒な背景は避け、まぶしさを抑えた明度にしている */
+:root{color-scheme:dark;--bg:#0f0d0c;--card:#1a1615;--card2:#241e1c;--primary:#e8664a;--primary-dark:#a8321c;--gold:#d6a94a;--gold-bg:rgba(214,169,74,.14);--ok:#4cc38a;--ok-bg:rgba(76,195,138,.12);--ng:#ef6b5b;--ng-bg:rgba(239,107,91,.13);--text:#e3d8d1;--muted:#a3918a;--border:rgba(255,150,120,.13);--code:#090807;--shadow:0 2px 10px rgba(0,0,0,.45)}
+body{background:var(--bg)}
+.head,.nav{background:#161312;border-color:rgba(232,102,74,.18);box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.nav{box-shadow:0 -2px 10px rgba(0,0,0,.5)}
+.nav button{color:#7d6b62}
+.badge{color:#f0a08c;background:rgba(232,102,74,.12);border-color:rgba(232,102,74,.3)}
+.samurai-hero{background:linear-gradient(135deg,rgba(232,102,74,.08) 0%,rgba(0,0,0,0) 60%)}
+.samurai-float img{filter:brightness(.9) drop-shadow(3px 6px 14px rgba(232,102,74,.25)) drop-shadow(0 0 22px rgba(214,169,74,.15))}
+.speech-bubble{border-color:rgba(214,169,74,.3)}
+.btn,.btn:hover{background:linear-gradient(135deg,#7a2414,#a8321c,#b8402a);color:#f3e9e3;border-color:rgba(214,169,74,.55);box-shadow:0 0 10px rgba(168,50,28,.3)}
+.btn:disabled{background:#2e2624;border-color:#2e2624;color:#7d6b62}
+.btn.sub,.btn.sub:hover{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.banner{background:linear-gradient(135deg,rgba(232,102,74,.1),rgba(214,169,74,.08));border-color:rgba(232,102,74,.28)}
+.banner button{background:#a8321c;color:#f3e9e3}
+.chip.on{border-color:var(--gold);background:rgba(214,169,74,.1)}
+.tag.hot{background:var(--ng-bg)}
+.choice .mark{color:var(--muted)}
+.acc>button{background:linear-gradient(135deg,#6e2012,#9a2e1a);color:#f0e4dd}
+.acc>button em{color:rgba(240,228,221,.75)}
+pre.code{color:#ddd3cc;border:1px solid rgba(255,255,255,.05)}
+pre.res{background:var(--card2);color:var(--text)}
+.search{background:var(--card);color:var(--text)}
+.search::placeholder{color:#7d6b62}
+.modal{background:rgba(0,0,0,.7)}
+.modal .box{background:var(--card);color:var(--text)}
+.toast{background:#2b2422;color:var(--text)}
+.day.now{background:#221b14}
+.score b{background:var(--card2);box-shadow:0 0 16px rgba(232,102,74,.15)}
+.score .pass{color:inherit}
 </style>
 </head>
 <body>
